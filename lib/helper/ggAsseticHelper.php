@@ -18,7 +18,7 @@ function gg_use_javascript($js)
   $config = sfConfig::get('app_gg_assetic_javascript');
   
   if (isset($config[$js]['version']) && $config[$js]['version'] > 0) {
-  	use_javascript('_'.$js.'.js?'.substr(sha1($config[$js]['version']), 0, 7));
+  	use_javascript('_'.$js.'.js?'.substr(sha1($config[$js]['version'].sfConfig::get('sf_root_dir')), 0, 7));
   } else {
     use_javascript(url_for('@asset_js?name='.$js));
   }
