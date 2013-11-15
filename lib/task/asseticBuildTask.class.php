@@ -64,14 +64,14 @@ EOF;
     
     $am = new Assetic\AssetManager();
     $references = array();
-    $filters = array(new Assetic\Filter\Yui\JsCompressorFilter(sfConfig::get('app_gg_assetic_yui_path')));
+    $filters = [new Assetic\Filter\UglifyJs2Filter('/usr/local/lib/node_modules/uglify-js/bin/uglifyjs')];
     $writer = new Assetic\AssetWriter(sfConfig::get('sf_web_dir').'/js');
     
     foreach ($config as $name => $script) { 
     	
     	if (isset($script['files'])) {
         foreach ($script['files'] as $file) {
-          $file_ref = str_replace('.', '_', $file); 
+          $file_ref = str_replace(['.', '/', '-'], '_', $file);
           $am->set($file_ref, new Assetic\Asset\FileAsset(sfConfig::get('sf_web_dir').'/js/'.$file));
           $references[] = new Assetic\Asset\AssetReference($am, $file_ref);
         }
@@ -85,12 +85,12 @@ EOF;
         }
       }
       
-      $am->set('combined', new Assetic\Asset\AssetCollection($references, $filters));
+      $coll = new Assetic\Asset\AssetCollection($references, $filters);
       
       if (isset($script['version'])) {
-        $filename = $name.'.'.$script['version'].'.min.js';
-        $am->get('combined')->setTargetUrl($filename);
-        $writer->writeAsset($am->get('combined'));
+        $filename = '_'.$name.'.js';
+        $coll->setTargetPath($filename);
+        $writer->writeAsset($coll);
         $this->logSection('build', sprintf(' - javascript file %s', $filename));
       }
       	

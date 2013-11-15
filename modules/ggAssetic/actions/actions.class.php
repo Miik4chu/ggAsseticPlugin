@@ -27,6 +27,7 @@ class ggAsseticActions extends sfActions
     }
     catch (Exception $e)
     {
+        throw $e;
       throw new sfError404Exception($e->getMessage());
     }
   }
@@ -77,7 +78,7 @@ class ggAsseticActions extends sfActions
     
     if (isset($config[$name]['files'])) {
       foreach ($config[$name]['files'] as $file) {
-        $file_ref = str_replace('.', '_', $file); 
+        $file_ref = str_replace(array('/', '-', '.'), '_', $file);
         $am->set($file_ref, new Assetic\Asset\FileAsset(sfConfig::get('sf_web_dir').'/'.$dir.'/'.$file));
         $references[] = new Assetic\Asset\AssetReference($am, $file_ref);
       }
