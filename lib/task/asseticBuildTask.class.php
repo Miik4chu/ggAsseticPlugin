@@ -1,4 +1,5 @@
 <?php
+use Assetic\Filter\UglifyCssFilter;
 
 /**
  * sseticBuildTask compiles css and js files thru symfony cli task system.
@@ -107,14 +108,14 @@ EOF;
         
     $am = new Assetic\AssetManager();
     $references = array();
-    $filters = array(new Assetic\Filter\Yui\CssCompressorFilter(sfConfig::get('app_gg_assetic_yui_path')));
+    $filters = array(new UglifyCssFilter('/usr/local/bin/uglifycss'));
     $writer = new Assetic\AssetWriter(sfConfig::get('sf_web_dir').'/css');
     
     foreach ($config as $name => $style) { 
     	
     	if (isset($style['files'])) {
         foreach ($style['files'] as $file) {
-          $file_ref = str_replace('.', '_', $file); 
+          $file_ref = str_replace(['.', '-', '/'], '_', $file);
           $am->set($file_ref, new Assetic\Asset\FileAsset(sfConfig::get('sf_web_dir').'/css/'.$file));
           $references[] = new Assetic\Asset\AssetReference($am, $file_ref);
         }
@@ -128,12 +129,12 @@ EOF;
         }
       }
       
-      $am->set('combined', new Assetic\Asset\AssetCollection($references, $filters));
-      
+      $coll = new Assetic\Asset\AssetCollection($references, $filters);
+
       if (isset($style['version'])) {
-        $filename = $name.'.'.$style['version'].'.min.css';
-        $am->get('combined')->setTargetUrl($filename);
-        $writer->writeAsset($am->get('combined'));
+        $filename = '_'.$name.'.css';
+        $coll->setTargetPath($filename);
+        $writer->writeAsset($coll);
         $this->logSection('build', sprintf(' - css file %s', $filename));
       }
       	
