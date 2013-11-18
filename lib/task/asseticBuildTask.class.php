@@ -1,5 +1,7 @@
 <?php
 use Assetic\Filter\UglifyCssFilter;
+use Assetic\Filter\Yui\CssCompressorFilter;
+use Assetic\Filter\Yui\JsCompressorFilter;
 
 /**
  * sseticBuildTask compiles css and js files thru symfony cli task system.
@@ -65,7 +67,7 @@ EOF;
     
     $am = new Assetic\AssetManager();
     $references = array();
-    $filters = [new Assetic\Filter\UglifyJs2Filter('/usr/local/lib/node_modules/uglify-js/bin/uglifyjs')];
+    $filters = [new JsCompressorFilter(sfConfig::get('sf_root_dir').'/bin/yuicompressor-2.4.8.jar')];
     $writer = new Assetic\AssetWriter(sfConfig::get('sf_web_dir').'/js');
     
     foreach ($config as $name => $script) { 
@@ -108,7 +110,7 @@ EOF;
         
     $am = new Assetic\AssetManager();
     $references = array();
-    $filters = array(new UglifyCssFilter('/usr/local/bin/uglifycss'));
+    $filters = array(new CssCompressorFilter(sfConfig::get('sf_root_dir').'/bin/yuicompressor-2.4.8.jar'));
     $writer = new Assetic\AssetWriter(sfConfig::get('sf_web_dir').'/css');
     
     foreach ($config as $name => $style) { 

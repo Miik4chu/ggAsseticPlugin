@@ -11,7 +11,7 @@
 use_helper('Asset');
 
 function _gg_assetic_hash($config) {
-    return substr(sha1(['version'].sfConfig::get('sf_root_dir')), 0, 7);
+    return substr(sha1($config['version'].sfConfig::get('sf_root_dir')), 0, 7);
 }
 
 /**
