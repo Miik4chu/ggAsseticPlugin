@@ -12,6 +12,10 @@ use_helper('Asset');
 
 function _gg_assetic_hash($config)
 {
+    if (!is_array($config['files'])) {
+        $config['files'] = [];
+    }
+
     return substr(sha1($config['version'] . implode(';', $config['files']) . sfConfig::get('sf_root_dir')), 0, 7);
 }
 
